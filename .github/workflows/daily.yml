@@ -3,7 +3,9 @@ name: BOAT RACE 全国一次判定
 on:
   workflow_dispatch:
   schedule:
-    - cron: '7 22 * * *'
+    - cron: '0 22 * * *'
+    - cron: '30 22 * * *'
+    - cron: '0 23 * * *'
 
 permissions:
   contents: read
@@ -17,19 +19,30 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - run: pip install requests beautifulsoup4
-      - run: python build_site.py
+
+      - name: Apply BOAT RACE patch
+        run: python patch_boatrace.py
+
+      - name: Build dashboard
+        run: python build_site.py
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+
       - id: deployment
         uses: actions/deploy-pages@v4
