@@ -43,3 +43,7 @@ summary = {
 }
 (out / "data.json").write_text(json.dumps({"summary": summary, "races": rows}, ensure_ascii=False), encoding="utf-8")
 print(json.dumps(summary, ensure_ascii=False))
+# Copy dashboard HTML to GitHub Pages
+source = root / "index.html"
+if source.exists():
+    (out / "index.html").write_bytes(source.read_bytes())
